@@ -22,9 +22,6 @@ class Plane(object):
         if not self.capacity:
             self.capacity = randint(1, 100)
 
-        print self.current_airport.name
-
-
     def __str__(self):
         return "%s (%s)" % (self.name[-6:], self.current_airport.name)
 
@@ -68,7 +65,6 @@ class Simulation(object):
 
         for i in range(3):
             plane = Plane(1, self.airports[randint(0, len(self.airports) - 1)])
-            print plane
             self.planes.append(plane)
 
 
@@ -83,22 +79,22 @@ class Simulation(object):
                     plane.passengers.remove(pax)
 
             # move the planes instantaneoeusously - TODO speed?
-            if not plane.current_airport == plane.destination:
+            if not plane.current_airport == plane.destination and not plane.destination == None:
                 plane.current_airport = plane.destination
                 # TODO update airport.planes - why the heck does this not work? where did current_airport disappear to??
-                print plane.name
-                print plane.current_airport
                 plane.current_airport.planes.append(plane)
 
 
         for airport in self.airports:
             # spawn new passengers with a new destination
-            if self.ticks % airport.passenger_spawn_rate:
+            print self.ticks % airport.passenger_spawn_rate
+            if self.ticks % airport.passenger_spawn_rate == 0:
                 pss = Passenger()
                 pss.destination = airport
                 while pss.destination == airport:
                     # TODO - use priority of airport in determinig destination
                     pss.destination = self.airports[randint(0, len(self.airports) - 1)]
+                airport.passengers.append(pss)
 
         self.schedule_flights()
 
@@ -119,7 +115,7 @@ class Simulation(object):
 
 
 s = Simulation()
-for i in range(2):
+for i in range(9):
     s.do_tick()
     s.display()
     sleep(1)
